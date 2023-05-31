@@ -94,22 +94,22 @@ const BookingForm = () => {
     <form onSubmit={handleSubmit}>
            <label>
         Name:
-        <input type="text" value={name} onChange={handleNameChange} required />
+        <input  className='field' type="text" value={name} onChange={handleNameChange} required />
       </label>
       <br />
       <label>
         Telephone:
-        <input type="tel" value={telephone} onChange={handleTelephoneChange} required />
+        <input className='field' type="tel" value={telephone} onChange={handleTelephoneChange} required />
       </label>
       <br />
       <label>
         Date:
-        <input type="date" value={date.toISOString().split('T')[0]} onChange={handleDateChange} required />
+        <input type="date" className='field' value={date.toISOString().split('T')[0]} onChange={handleDateChange} required />
       </label>
       <br />
       <label>
         Time:
-        <select value={time} onChange={handleTimeChange} required>
+        <select  className='field' value={time} onChange={handleTimeChange} required>
           <option value="">Select a time</option>
           {availableTimeSlots.map((slot) => (
             <option key={slot} value={slot}>
@@ -121,12 +121,12 @@ const BookingForm = () => {
       <br />
       <label>
         Number of Guests:
-        <input type="number" value={guests} onChange={handleGuestsChange} required />
+        <input className='field'type="number" value={guests} onChange={handleGuestsChange} required />
       </label>
       <br />
       <label>
         Occasion:
-        <select value={occasion} onChange={handleOccasionChange} required>
+        <select className='field' value={occasion} onChange={handleOccasionChange} required>
           <option value="">Select an occasion</option>
           <option value="anniversary">Anniversary</option>
           <option value="birthday">Birthday</option>
@@ -134,7 +134,8 @@ const BookingForm = () => {
         </select>
       </label>
       <br />
-      <button className='primaryBtn' type="submit">Submit</button>
+      <button  className='field primaryBtn' type="submit">Submit</button>  
+      <button  className='field primaryBtn' onClick={() => navigate('/')}>Cancel</button> 
     </form>
   );
 };

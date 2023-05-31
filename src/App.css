@@ -69,7 +69,21 @@ main {
   border-radius: 1rem;
   padding: 12px 46px;
 }
-
+form{
+  width:40%;
+  background-color: lightgoldenrodyellow;
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+.field {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
 /* HERO */
 
 #heroSection {
