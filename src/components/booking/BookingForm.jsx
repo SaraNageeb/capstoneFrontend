@@ -3,6 +3,8 @@ import { fetchAPI, submitAPI } from '../../api';
 import { useNavigate } from 'react-router-dom';
 
 const initialState = {
+  name: '',
+  telephone: '',
   date: new Date(),
   time: '',
   guests: 0,
@@ -12,6 +14,10 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_NAME':
+      return { ...state, name: action.payload };
+    case 'SET_TELEPHONE':
+      return { ...state, telephone: action.payload };
     case 'SET_DATE':
       return { ...state, date: action.payload };
     case 'SET_TIME':
@@ -33,12 +39,20 @@ const BookingForm = () => {
   const navigate = useNavigate();
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { date, time, guests, occasion, availableTimeSlots } = state;
+  const { name, telephone,date, time, guests, occasion, availableTimeSlots } = state;
 
   useEffect(() => {
     const updatedTimeSlots = fetchAPI(date);
     dispatch({ type: 'SET_AVAILABLE_TIME_SLOTS', payload: updatedTimeSlots });
   }, [date]);
+
+  const handleNameChange = (e) => {
+    dispatch({ type: 'SET_NAME', payload: e.target.value });
+  };
+
+  const handleTelephoneChange = (e) => {
+    dispatch({ type: 'SET_TELEPHONE', payload: e.target.value });
+  };
 
   const handleDateChange = (e) => {
     const selectedDate = new Date(e.target.value);
@@ -60,6 +74,8 @@ const BookingForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = {
+      name,
+      telephone,
       date,
       time,
       guests,
@@ -76,6 +92,16 @@ const BookingForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+           <label>
+        Name:
+        <input type="text" value={name} onChange={handleNameChange} required />
+      </label>
+      <br />
+      <label>
+        Telephone:
+        <input type="tel" value={telephone} onChange={handleTelephoneChange} required />
+      </label>
+      <br />
       <label>
         Date:
         <input type="date" value={date.toISOString().split('T')[0]} onChange={handleDateChange} required />
@@ -108,7 +134,7 @@ const BookingForm = () => {
         </select>
       </label>
       <br />
-      <button type="submit">Submit</button>
+      <button className='primaryBtn' type="submit">Submit</button>
     </form>
   );
 };

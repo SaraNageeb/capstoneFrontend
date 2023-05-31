@@ -59,7 +59,7 @@ main {
   width: 100%;
   height: 200px;
 }
-
+ 
 .primaryBtn {
   border: none;
   font-size: 1.2rem;
@@ -157,7 +157,16 @@ main {
   font-weight: 400;
   font-size: 2.4rem;
 }
+@media screen and (max-width: 1023px) {
+  .weekSpecialContainer .head {
+    flex-direction: column;
+      align-items:flex-start;
+    margin-top: 3rem;
+   
+      
+  }
 
+}
 .weekSpecialContainer .content .row {
   display: flex;
   column-gap: 2.2rem;
