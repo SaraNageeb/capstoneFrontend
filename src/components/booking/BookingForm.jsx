@@ -1,99 +1,116 @@
-import  { useState ,useEffect } from 'react';
-import { fetchAPI, submitAPI } from "../../api"
+import React, { useReducer, useEffect } from 'react';
+import { fetchAPI, submitAPI } from '../../api';
+import { useNavigate } from 'react-router-dom';
+
+const initialState = {
+  date: new Date(),
+  time: '',
+  guests: 0,
+  occasion: '',
+  availableTimeSlots: [],
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_DATE':
+      return { ...state, date: action.payload };
+    case 'SET_TIME':
+      return { ...state, time: action.payload };
+    case 'SET_GUESTS':
+      return { ...state, guests: action.payload };
+    case 'SET_OCCASION':
+      return { ...state, occasion: action.payload };
+    case 'SET_AVAILABLE_TIME_SLOTS':
+      return { ...state, availableTimeSlots: action.payload };
+    case 'RESET_FORM':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
 const BookingForm = () => {
-  const [availableSlots, setAvailableSlots] = useState([]);
+  const navigate = useNavigate();
 
-
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState('');
-  const [guests, setGuests] = useState('');
-  const [occasion, setOccasion] = useState('');
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { date, time, guests, occasion, availableTimeSlots } = state;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const slots = await fetchAPI(date);
-      setAvailableSlots(slots);
-    };
-
-    fetchData();
+    const updatedTimeSlots = fetchAPI(date);
+    dispatch({ type: 'SET_AVAILABLE_TIME_SLOTS', payload: updatedTimeSlots });
   }, [date]);
+
+  const handleDateChange = (e) => {
+    const selectedDate = new Date(e.target.value);
+    dispatch({ type: 'SET_DATE', payload: selectedDate });
+  };
+
+  const handleTimeChange = (e) => {
+    dispatch({ type: 'SET_TIME', payload: e.target.value });
+  };
+
+  const handleGuestsChange = (e) => {
+    dispatch({ type: 'SET_GUESTS', payload: parseInt(e.target.value) });
+  };
+
+  const handleOccasionChange = (e) => {
+    dispatch({ type: 'SET_OCCASION', payload: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Submit reservation logic goes here
-const formData = {
+    const formData = {
       date,
-      time, // Assuming the time input has the name "time"
+      time,
+      guests,
+      occasion
     };
-
-    const isSubmitted = submitAPI(formData);
-    if (isSubmitted) {
-      // Handle successful submission
-      console.log('Form submitted successfully');
+    const success = submitAPI(formData);
+    if (success) {
+      dispatch({ type: 'RESET_FORM' });
+      navigate('/bookingconfirmed');
     } else {
-      // Handle submission error
-      console.log('Form submission failed');
+      alert('Booking submission failed.');
     }
-    // Reset form fields
-    setDate('');
-    setTime('');
-    setGuests('');
-    setOccasion('');
   };
 
   return (
-    <form className="booking-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="date">Date:</label>
-        <input
-         type="date"
-         value={new Date(date).toISOString().split('T')[0]}
-         onChange={(e) => setDate(new Date(e.target.value))}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="time">Time:</label>
-        <select name="time"   onChange={(e) =>setTime(e.target.value)} value={time}>
-          {availableSlots.map((slot) => (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Date:
+        <input type="date" value={date.toISOString().split('T')[0]} onChange={handleDateChange} required />
+      </label>
+      <br />
+      <label>
+        Time:
+        <select value={time} onChange={handleTimeChange} required>
+          <option value="">Select a time</option>
+          {availableTimeSlots.map((slot) => (
             <option key={slot} value={slot}>
               {slot}
             </option>
           ))}
         </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="guests">Number of guests:</label>
-        <input
-          type="number"
-          id="guests"
-          placeholder="1" min="1" max="10"
-          value={guests}
-          onChange={(e) => setGuests(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="occasion">Occasion:</label>
-        <select
-          id="occasion"
-          value={occasion}
-          onChange={(e) => setOccasion(e.target.value)}
-          required
-        >
+      </label>
+      <br />
+      <label>
+        Number of Guests:
+        <input type="number" value={guests} onChange={handleGuestsChange} required />
+      </label>
+      <br />
+      <label>
+        Occasion:
+        <select value={occasion} onChange={handleOccasionChange} required>
           <option value="">Select an occasion</option>
-          <option value="birthday">Birthday</option>
           <option value="anniversary">Anniversary</option>
+          <option value="birthday">Birthday</option>
+          <option value="meeting">Meeting</option>
         </select>
-      </div>
-
-      <button type="submit">Submit reservation</button>
+      </label>
+      <br />
+      <button type="submit">Submit</button>
     </form>
   );
 };
 
-export default BookingForm;
+export default BookingForm

@@ -5,6 +5,8 @@ import './App.css';
 
 import Home from './pages/Home';
 import Booking from './pages/Booking';
+import BookingConfirmed from './pages/BookingConfirmed';
+
 function App() {
   return (
     <>
@@ -13,6 +15,8 @@ function App() {
     <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/booking" element={<Booking />} />
+        <Route path="/bookingconfirmed" element={<BookingConfirmed/>} />
+
       </Routes>
       <Footer/>
     </BrowserRouter>
