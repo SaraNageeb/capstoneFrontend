@@ -1,6 +1,8 @@
-import React, { useReducer, useEffect } from 'react';
+import  { useReducer, useEffect,useState} from 'react';
 import { fetchAPI, submitAPI } from '../../api';
 import { useNavigate } from 'react-router-dom';
+ import { validateForm } from '../../utils/validateForm';
+
 
 const initialState = {
   name: '',
@@ -37,7 +39,7 @@ const reducer = (state, action) => {
 
 const BookingForm = () => {
   const navigate = useNavigate();
-
+  const [errors, setErrors] = useState({});
   const [state, dispatch] = useReducer(reducer, initialState);
   const { name, telephone,date, time, guests, occasion, availableTimeSlots } = state;
 
@@ -48,45 +50,63 @@ const BookingForm = () => {
 
   const handleNameChange = (e) => {
     dispatch({ type: 'SET_NAME', payload: e.target.value });
+    setErrors((prevErrors) => ({ ...prevErrors, name: validateForm('name', e.target.value) }));
+
   };
 
   const handleTelephoneChange = (e) => {
     dispatch({ type: 'SET_TELEPHONE', payload: e.target.value });
+    setErrors((prevErrors) => ({ ...prevErrors, telephone: validateForm('telephone', e.target.value) }));
+
   };
 
   const handleDateChange = (e) => {
     const selectedDate = new Date(e.target.value);
     dispatch({ type: 'SET_DATE', payload: selectedDate });
+    setErrors((prevErrors) => ({ ...prevErrors, date: validateForm('date', selectedDate) }));
+
   };
 
   const handleTimeChange = (e) => {
     dispatch({ type: 'SET_TIME', payload: e.target.value });
+    setErrors((prevErrors) => ({ ...prevErrors, time: validateForm('time', e.target.value) }));
+
   };
 
   const handleGuestsChange = (e) => {
     dispatch({ type: 'SET_GUESTS', payload: parseInt(e.target.value) });
+    setErrors((prevErrors) => ({ ...prevErrors, guests: validateForm('guests',  parseInt(e.target.value)) }));
+
   };
 
   const handleOccasionChange = (e) => {
     dispatch({ type: 'SET_OCCASION', payload: e.target.value });
+    setErrors((prevErrors) => ({ ...prevErrors, occasion: validateForm('occasion', e.target.value ) }));
+
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = {
-      name,
-      telephone,
-      date,
-      time,
-      guests,
-      occasion
-    };
+    const validationErrors = validateForm(state);
+
+   
+     if (Object.keys(validationErrors).length === 0) {
+      // Form is valid, proceed with submission
+      const formData = {
+        name,
+        telephone,
+        date,
+        time,
+        guests,
+        occasion
+      };
     const success = submitAPI(formData);
     if (success) {
       dispatch({ type: 'RESET_FORM' });
       navigate('/bookingconfirmed');
-    } else {
-      alert('Booking submission failed.');
+    } }else {
+     //form not valid
+      setErrors(validationErrors);
     }
   };
 
@@ -95,18 +115,27 @@ const BookingForm = () => {
            <label>
         Name:
         <input  className='field' type="text" value={name} onChange={handleNameChange} required />
+        {errors.name && <p className="error">{errors.name}</p>}
+
       </label>
       <br />
+
       <label>
         Telephone:
         <input className='field' type="tel" value={telephone} onChange={handleTelephoneChange} required />
+        {errors.telephone && <p className="error">{errors.telephone}</p>}
+
       </label>
-      <br />
+      <br /> 
+ 
       <label>
         Date:
         <input type="date" className='field' value={date.toISOString().split('T')[0]} onChange={handleDateChange} required />
+        {errors.date && <p className="error">{errors.date}</p>}
+
       </label>
       <br />
+
       <label>
         Time:
         <select  className='field' value={time} onChange={handleTimeChange} required>
@@ -121,7 +150,7 @@ const BookingForm = () => {
       <br />
       <label>
         Number of Guests:
-        <input className='field'type="number" value={guests} onChange={handleGuestsChange} required />
+        <input className='field'type="number" min={1} max={200} value={guests} onChange={handleGuestsChange} required />
       </label>
       <br />
       <label>
@@ -136,6 +165,7 @@ const BookingForm = () => {
       <br />
       <button  className='field primaryBtn' type="submit">Submit</button>  
       <button  className='field primaryBtn' onClick={() => navigate('/')}>Cancel</button> 
+      
     </form>
   );
 };

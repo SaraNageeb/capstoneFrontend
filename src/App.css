@@ -75,6 +75,7 @@ form{
   padding: 2rem;
   margin-bottom: 3rem;
 }
+ 
 .field {
   width: 100%;
   padding: 12px 20px;
@@ -530,3 +531,25 @@ button {
 button:hover {
   background-color: #0069d9;
 }
+.error{
+color: brown;
+}
+.booking-confirmed {
+  background-color: #7ba57b;
+  padding: 200px;
+  border-radius: 12px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 1.6rem;
+}
+.goback{
+  margin-left: 6rem;
+  margin-top: 0.8rem;
+}
+
+
+
+
+
+
